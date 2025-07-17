@@ -28,7 +28,6 @@ taskForm.addEventListener("submit", function(e) {
 
   taskArr.push(task);
   renderTasks();
-  logTasks();
 });
 
 // task configuration events
@@ -56,8 +55,6 @@ taskmanager.addEventListener("click", function(e){
       // remove item from array at index
       taskArr.splice(taskIndex, 1);
       renderTasks();
-      logTasks();
-      return;
     };
 
     // Toggle completion checkbox
@@ -65,7 +62,6 @@ taskmanager.addEventListener("click", function(e){
         // update task's checked status in the data model
         taskArr[taskIndex].isCompleted = e.target.checked;
         renderTasks();
-        logTasks();
       };
     };
 });
@@ -113,4 +109,6 @@ function renderTasks(){
     `
     taskmanager.append(taskEl);
   };
+  
+  logTasks();
 };
