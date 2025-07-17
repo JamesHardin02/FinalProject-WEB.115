@@ -7,7 +7,7 @@ const taskName = document.getElementById("taskName");
 const taskPriority = document.getElementById("taskPriority");
 const taskImportant = document.getElementById("taskImportant");
 const taskCompleted = document.getElementById("taskCompleted");
-const taskList = document.getElementById("taskList");
+const taskmanager = document.getElementById("taskmanager");
 
 function logTasks() {
   console.log(JSON.stringify(taskArr));
@@ -32,7 +32,7 @@ taskForm.addEventListener("submit", function(e) {
 });
 
 // task configuration events
-taskList.addEventListener("click", function(e){
+taskmanager.addEventListener("click", function(e){
   // qualify it is a task that was clicked
   taskParentDiv = e.target.closest(".task");
   if(!taskParentDiv){
@@ -70,10 +70,18 @@ taskList.addEventListener("click", function(e){
     };
 });
 
+function priorityColor(priority) {
+  switch (priority) {
+    case 'High':   return '#d9534f'; // red
+    case 'Medium': return '#f0ad4e'; // orange
+    default:       return '#5bc0de'; // blue
+  };
+};
+
 // render tasks on page
 function renderTasks(){
   // clear list
-  taskList.innerHTML = ""
+  taskmanager.innerHTML = ""
 
   // extract each task from taskArr and append to task list
   for(i = 0; i < taskArr.length; i++){
@@ -81,6 +89,19 @@ function renderTasks(){
     const taskEl = document.createElement('div');
     taskEl.className = 'task';
     taskEl.dataset.id = task.id;
+    taskEl.style.borderLeft = "6px solid " + priorityColor(task.priority), "#6c757d";
+
+    // Conditional styling for important and completed tasks
+    if (task.isImportant) {
+      taskEl.style.background = '#ffe6e6'; // light red tint
+    }
+    if (task.isCompleted) {
+      taskEl.style.textDecoration = 'line-through';
+      taskEl.style.opacity = '0.6';
+    } else {
+      taskEl.style.textDecoration = 'none';
+      taskEl.style.opacity = '1';
+    };
 
     taskEl.innerHTML = `
       <input type="checkbox" class="toggle-complete" ${task.isCompleted ? 'checked' : ''} title="Complete task">
@@ -90,6 +111,6 @@ function renderTasks(){
       </div>
       <button class="delete-btn" title="Delete">❌</button>
     `
-    taskList.append(taskEl);
+    taskmanager.append(taskEl);
   };
 };
