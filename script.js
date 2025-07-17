@@ -14,6 +14,7 @@ function logTasks() {
 };
 
 // Event Listeners
+// add task form submission
 taskForm.addEventListener("submit", function(e) {
   e.preventDefault();
   const task = {
@@ -30,6 +31,45 @@ taskForm.addEventListener("submit", function(e) {
   logTasks();
 });
 
+// task configuration events
+taskList.addEventListener("click", function(e){
+  // qualify it is a task that was clicked
+  taskParentDiv = e.target.closest(".task");
+  if(!taskParentDiv){
+    return;
+  };
+
+  // get task id from the clicked task
+  const taskId = Number(taskParentDiv.dataset.id);
+  let taskIndex = false
+  // find task index in taskArr by matching id of clicked task
+  for (i = 0; i < taskArr.length; i++){
+    if (taskArr[i].id === taskId){
+      taskIndex = i
+    };
+  };
+
+  // task configuration events
+  if (taskIndex !== false) {
+    // Delete button
+    if (e.target.classList.contains('delete-btn')) {
+      // remove item from array at index
+      taskArr.splice(taskIndex, 1);
+      renderTasks();
+      logTasks();
+      return;
+    };
+
+    // Toggle completion checkbox
+    if (e.target.classList.contains('toggle-complete')) {
+        // update task's checked status in the data model
+        taskArr[taskIndex].isCompleted = e.target.checked;
+        renderTasks();
+        logTasks();
+      };
+    };
+});
+
 // render tasks on page
 function renderTasks(){
   // clear list
@@ -39,6 +79,9 @@ function renderTasks(){
   for(i = 0; i < taskArr.length; i++){
     task = taskArr[i]; 
     const taskEl = document.createElement('div');
+    taskEl.className = 'task';
+    taskEl.dataset.id = task.id;
+
     taskEl.innerHTML = `
       <input type="checkbox" class="toggle-complete" ${task.isCompleted ? 'checked' : ''} title="Complete task">
       <div class="taskDetails">
