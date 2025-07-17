@@ -1,5 +1,5 @@
 // data-model
-const taskArr = [];
+const tasks = [];
 
 // DOM Elements
 const taskForm = document.getElementById("taskForm");
@@ -10,7 +10,7 @@ const taskCompleted = document.getElementById("taskCompleted");
 const taskmanager = document.getElementById("taskmanager");
 
 function logTasks() {
-  console.log(JSON.stringify(taskArr));
+  console.log(JSON.stringify(tasks));
 };
 
 // Event Listeners
@@ -26,8 +26,12 @@ taskForm.addEventListener("submit", function(e) {
     date: new Date().toLocaleString()
   };
 
-  taskArr.push(task);
+  tasks.push(task);
   renderTasks();
+
+  // set defaults values back for the form
+  taskForm.reset();
+  taskPriority.value = 'Medium';
 });
 
 // task configuration events
@@ -41,9 +45,9 @@ taskmanager.addEventListener("click", function(e){
   // get task id from the clicked task
   const taskId = Number(taskParentDiv.dataset.id);
   let taskIndex = false
-  // find task index in taskArr by matching id of clicked task
-  for (i = 0; i < taskArr.length; i++){
-    if (taskArr[i].id === taskId){
+  // find task index in tasks array by matching id of clicked task
+  for (i = 0; i < tasks.length; i++){
+    if (tasks[i].id === taskId){
       taskIndex = i
     };
   };
@@ -53,19 +57,20 @@ taskmanager.addEventListener("click", function(e){
     // Delete button
     if (e.target.classList.contains('delete-btn')) {
       // remove item from array at index
-      taskArr.splice(taskIndex, 1);
+      tasks.splice(taskIndex, 1);
       renderTasks();
     };
 
     // Toggle completion checkbox
     if (e.target.classList.contains('toggle-complete')) {
         // update task's checked status in the data model
-        taskArr[taskIndex].isCompleted = e.target.checked;
+        tasks[taskIndex].isCompleted = e.target.checked;
         renderTasks();
       };
     };
 });
 
+// apply color to left border of tasks to indicate task priority
 function priorityColor(priority) {
   switch (priority) {
     case 'High':   return '#d9534f'; // red
@@ -79,15 +84,18 @@ function renderTasks(){
   // clear list
   taskmanager.innerHTML = ""
 
-  // extract each task from taskArr and append to task list
-  for(i = 0; i < taskArr.length; i++){
-    task = taskArr[i]; 
+  // extract each task from tasks array and append to task list
+  for(i = 0; i < tasks.length; i++){
+    // task object
+    task = tasks[i]; 
+
+    // task div
     const taskEl = document.createElement('div');
     taskEl.className = 'task';
     taskEl.dataset.id = task.id;
     taskEl.style.borderLeft = "6px solid " + priorityColor(task.priority), "#6c757d";
 
-    // Conditional styling for important and completed tasks
+    // Conditional styling for task status
     if (task.isImportant) {
       taskEl.style.background = '#ffe6e6'; // light red tint
     }
@@ -109,6 +117,6 @@ function renderTasks(){
     `
     taskmanager.append(taskEl);
   };
-  
+
   logTasks();
 };
